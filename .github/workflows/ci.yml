@@ -1,0 +1,37 @@
+name: CI Pipeline
+
+# Define quando o workflow será executado
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+# Jobs que serão executados
+jobs:
+  test:
+    runs-on: ubuntu-latest  # Executa em um ambiente Ubuntu
+
+    steps:
+      # 1. Faz checkout do código do repositório
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # 2. Configura o Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Use a versão do Python do seu projeto
+
+      # 3. Instala as dependências
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # 4. Executa os testes
+      - name: Run tests
+        run: |
+          python -m pytest
