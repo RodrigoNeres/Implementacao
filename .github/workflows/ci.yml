@@ -34,4 +34,4 @@ jobs:
       # 4. Executa os testes
       - name: Run tests
         run: |
-          python -m pytest
+          python -m main
