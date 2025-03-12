@@ -9,64 +9,63 @@ on:
       - main
 
 jobs:
-  build-and-test:
+  test:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Faz checkout do código
+      # 1. Faz checkout do código do repositório
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Configura o Docker Buildx
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+      # 2. Configura o Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'  # Substitua pela versão do Python do seu projeto
 
-      # 3. Constrói a imagem Docker
-      - name: Build Docker image
-        run: docker build -t minha-aplicacao-python .
+      # 3. Instala as dependências
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
 
-      # 4. Executa testes dentro do contêiner
+      # 4. Executa os testes
       - name: Run tests
-        run: docker run minha-aplicacao-python python -m pytest
+        run: |
+          python -m pytest
 
-  deploy-to-render:
-    needs: build-and-test  # Depende do job build-and-test
+  deploy:
     runs-on: ubuntu-latest
+    needs: test  # Garante que o deploy só ocorra após os testes passarem
+    if: github.ref == 'refs/heads/main'  # Executa o deploy apenas no branch main
 
     steps:
-      # 1. Faz checkout do código
+      # 1. Faz checkout do código do repositório
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Instala o Render CLI
+      # 2. Instala a CLI do Render
       - name: Install Render CLI
         run: |
-          curl -fsSL https://cli.render.com/install.sh | bash
+          curl -s https://cli.render.com/install.sh | bash
 
-      # 3. Adiciona o Render CLI ao PATH
+      # 3. Adiciona a CLI do Render ao PATH
       - name: Add Render CLI to PATH
         run: |
           echo "$HOME/.render/bin" >> $GITHUB_PATH
 
-      # 4. Faz login no Render
-      - name: Log in to Render
+      # 4. Verifica se a CLI foi instalada corretamente
+      - name: Verify Render CLI installation
+        run: |
+          which render
+          render --version
+
+      # 5. Faz login na Render usando a chave de API
+      - name: Login to Render
         run: |
           render login --api-key ${{ secrets.RENDER_API_KEY }}
 
-      # 5. Faz o deploy no Render
+      # 6. Executa o deploy na Render
       - name: Deploy to Render
         run: |
-          render services create \
-            --name minha-aplicacao-python \
-            --type web \
-            --dockerfile Dockerfile \
-            --env PORT=8080 \
-            --env PYTHON_VERSION=3.9 \
-            --region us-east-1 \
-            --plan free
-
-      # 6. Exibe o link da aplicação no Render
-      - name: Show app URL
-        run: |
-          echo "Aplicação implantada com sucesso!"
-          echo "Acesse: https://minha-aplicacao-python.onrender.com"
+          render deploy
