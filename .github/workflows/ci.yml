@@ -39,27 +39,24 @@ jobs:
     needs: test  # Garante que o deploy só ocorra após os testes passarem
     if: github.ref == 'refs/heads/main'  # Executa o deploy apenas no branch main
 
-    container:
-      image: ubuntu:latest  # Usa uma imagem base do Ubuntu
-
     steps:
       # 1. Faz checkout do código do repositório
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Atualiza o sistema e instala dependências básicas
+      # 2. Instala dependências do sistema (unzip)
       - name: Install system dependencies
         run: |
-          apt-get update
-          apt-get install -y curl bash
+          sudo apt-get update
+          sudo apt-get install -y unzip
 
-      # 3. Instala a CLI do Render
+      # 3. Baixa e instala a CLI do Render
       - name: Install Render CLI
         run: |
-          mkdir -p $HOME/.render/bin
-          curl -L https://cli.render.com/install.sh -o $HOME/.render/install.sh
-          bash $HOME/.render/install.sh
-          echo "$HOME/.render/bin" >> $GITHUB_PATH
+          curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
+          unzip render.zip
+          sudo mv cli_v1.1.0 /usr/local/bin/render
+          chmod +x /usr/local/bin/render
 
       # 4. Verifica se a CLI foi instalada corretamente
       - name: Verify Render CLI installation
