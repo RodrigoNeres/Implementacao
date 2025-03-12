@@ -75,7 +75,7 @@ jobs:
       # 6. Executa o deploy na Render
       - name: Deploy to Render
         run: |
-          render deploys
+          render deploys create
 
       # 7. Obtém a URL do serviço
       - name: Get Service URL
