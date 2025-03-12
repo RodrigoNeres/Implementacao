@@ -42,17 +42,18 @@ jobs:
       - name: Install Render CLI
         run: |
           curl -fsSL https://cli.render.com/install.sh | bash
-      
+
+      # 3. Adiciona o Render CLI ao PATH
       - name: Add Render CLI to PATH
         run: |
-            echo "$HOME/.render/bin" >> $GITHUB_PATH
+          echo "$HOME/.render/bin" >> $GITHUB_PATH
 
-      # 3. Faz login no Render
+      # 4. Faz login no Render
       - name: Log in to Render
         run: |
           render login --api-key ${{ secrets.RENDER_API_KEY }}
 
-      # 4. Faz o deploy no Render
+      # 5. Faz o deploy no Render
       - name: Deploy to Render
         run: |
           render services create \
@@ -63,9 +64,9 @@ jobs:
             --env PYTHON_VERSION=3.9 \
             --region us-east-1 \
             --plan free
-          
-        # 5. Exibe o link da aplicação no Render
+
+      # 6. Exibe o link da aplicação no Render
       - name: Show app URL
         run: |
           echo "Aplicação implantada com sucesso!"
-          echo "Acesse: implementacao.onrender.com"  
+          echo "Acesse: https://minha-aplicacao-python.onrender.com"
