@@ -54,7 +54,7 @@ jobs:
       - name: Install Render CLI
         run: |
           curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
-          unzip render.zip
+          unzip -o render.zip  # Sobrescreve arquivos existentes sem perguntar
           sudo mv cli_v1.1.0 /usr/local/bin/render
           chmod +x /usr/local/bin/render
 
@@ -68,6 +68,11 @@ jobs:
       - name: Login to Render
         run: |
           render login --api-key ${{ secrets.RENDER_API_KEY }}
+
+      # 6. Executa o deploy na Render
+      - name: Deploy to Render
+        run: |
+          render deploy
 
       # 6. Executa o deploy na Render
       - name: Deploy to Render
