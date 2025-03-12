@@ -1,7 +1,5 @@
 name: Docker CI/CD Pipeline
 
-name: CI Pipeline with Render Deploy
-
 on:
   push:
     branches:
