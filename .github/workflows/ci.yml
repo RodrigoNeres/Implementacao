@@ -42,6 +42,10 @@ jobs:
       - name: Install Render CLI
         run: |
           curl -fsSL https://cli.render.com/install.sh | bash
+          
+      - name: Verify Render CLI installation
+        run: |
+          render --version
 
       # 3. Faz login no Render
       - name: Log in to Render
