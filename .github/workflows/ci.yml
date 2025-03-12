@@ -44,11 +44,20 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Instala a CLI do Render
-      - name: Install Render CLI
+      # 2. Instala a CLI do Render manualmente
+      - name: Install Render CLI manually
         run: |
-          curl -s https://cli.render.com/install.sh | bash
-          ls -la $HOME/.render/bin  # Verifica se a instalação foi bem-sucedida
+          echo "Creating Render CLI directory..."
+          mkdir -p $HOME/.render/bin
+
+          echo "Downloading Render CLI..."
+          curl -L https://cli.render.com/install.sh -o $HOME/.render/install.sh
+
+          echo "Installing Render CLI..."
+          bash $HOME/.render/install.sh
+
+          echo "Verifying installation..."
+          ls -la $HOME/.render/bin
 
       # 3. Adiciona a CLI do Render ao PATH
       - name: Add Render CLI to PATH
