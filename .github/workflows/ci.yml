@@ -64,13 +64,18 @@ jobs:
           which render
           render --version
 
-      # 5. Faz login na Render usando a variável de ambiente
+      # 5. Faz login na Render usando a variável de ambiente (modo não interativo)
       - name: Login to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           export RENDER_API_KEY
-          render login
+          render login -o text  # Força o modo não interativo
+
+      # 6. Executa o deploy na Render
+      - name: Deploy to Render
+        run: |
+          render deploy
 
       # 6. Executa o deploy na Render
       - name: Deploy to Render
