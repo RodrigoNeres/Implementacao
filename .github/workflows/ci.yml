@@ -50,28 +50,22 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y unzip jq
 
-      # 3. Baixa e instala a CLI do Render
+      # 3. Baixa e instala a CLI do Render corretamente
       - name: Install Render CLI
         run: |
           curl -L https://github.com/render-oss/cli/releases/latest/download/render -o render
           chmod +x render
           sudo mv render /usr/local/bin/render
+          if ! /usr/local/bin/render --version; then echo "Erro: Render CLI não foi instalada corretamente!" && exit 1; fi
 
-      # 4. Verifica se a CLI foi instalada corretamente
-      - name: Verify Render CLI installation
-        run: |
-          if [ ! -x "/usr/local/bin/render" ]; then echo "Erro: Render CLI não foi instalada corretamente!" && exit 1; fi
-          which render
-          render --version
-
-      # 5. Define workspace na Render
+      # 4. Define workspace na Render
       - name: Set Render Workspace
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render workspace set --api-key $RENDER_API_KEY default
+          render workspace set default
 
-      # 6. Obtém o ID do serviço Render
+      # 5. Obtém o ID do serviço Render
       - name: Get Render Service ID
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
@@ -80,20 +74,20 @@ jobs:
           if [ -z "$SERVICE_ID" ]; then echo "Erro: Serviço 'implementacao' não encontrado!" && exit 1; fi
           echo "SERVICE_ID=$SERVICE_ID" >> $GITHUB_ENV
 
-      # 7. Executa o deploy na Render usando o ID do serviço
+      # 6. Executa o deploy na Render usando o ID do serviço
       - name: Deploy to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           render deploys create $SERVICE_ID -o text
 
-      # 8. Obtém a URL do serviço
+      # 7. Obtém a URL do serviço
       - name: Get Service URL
         run: |
           SERVICE_URL=$(render services list -o json | jq -r '.[] | select(.service.id=="'$SERVICE_ID'").service.serviceDetails.url')
           echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
 
-      # 9. Exibe a URL do serviço
+      # 8. Exibe a URL do serviço
       - name: Display Service URL
         run: |
           echo "A aplicação está disponível em: $SERVICE_URL"
