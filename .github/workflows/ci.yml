@@ -46,9 +46,9 @@ jobs:
 
       - name: Install Render CLI
         run: |
-          LATEST_RELEASE=$(curl -s https://api.github.com/repos/render-oss/cli/releases/latest | jq -r '.assets[] | select(.name | test("render-linux-amd64$")) | .browser_download_url')
+          LATEST_RELEASE=$(curl -s https://api.github.com/repos/render-oss/cli/releases/latest | jq -r '.tag_name')
           if [ -z "$LATEST_RELEASE" ]; then echo "Erro: Não foi possível obter a versão mais recente do Render CLI!" && exit 1; fi
-          curl -fsSL "$LATEST_RELEASE" -o render
+          curl -fsSL "https://github.com/render-oss/cli/releases/download/$LATEST_RELEASE/render-linux-amd64" -o render
           chmod +x render
           sudo mv render /usr/local/bin/render
           if ! /usr/local/bin/render --version; then echo "Erro: Render CLI não foi instalada corretamente!" && exit 1; fi
