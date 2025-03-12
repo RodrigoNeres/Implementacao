@@ -53,9 +53,7 @@ jobs:
       # 3. Baixa e instala a CLI do Render
       - name: Install Render CLI
         run: |
-          curl -L https://github.com/render-oss/cli/releases/download/v1.1.0/cli_1.1.0_linux_amd64.zip -o render.zip
-          unzip -o render.zip
-          sudo mv cli_v1.1.0 /usr/local/bin/render
+          curl -L https://github.com/render-oss/cli/releases/latest/download/render -o /usr/local/bin/render
           chmod +x /usr/local/bin/render
 
       # 4. Verifica se a CLI foi instalada corretamente
@@ -64,12 +62,12 @@ jobs:
           which render
           render --version
 
-      # 5. Exporta a API Key para o ambiente
-      - name: Set Render API Key
+      # 5. Define workspace na Render
+      - name: Set Render Workspace
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          echo "RENDER_API_KEY está definido."
+          render workspace set --api-key $RENDER_API_KEY default
 
       # 6. Obtém o ID do serviço Render
       - name: Get Render Service ID
