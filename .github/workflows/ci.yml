@@ -64,21 +64,26 @@ jobs:
           which render
           render --version
 
-      # 5. Executa o deploy na Render (modo não interativo)
-      - name: Deploy to Render
+      # 5. Autentica na Render
+      - name: Authenticate with Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render deploys create implementacao -o text --api-key $RENDER_API_KEY
+          echo "$RENDER_API_KEY" | render login --api-key
 
-      # 6. Obtém a URL do serviço
+      # 6. Executa o deploy na Render (modo não interativo)
+      - name: Deploy to Render
+        run: |
+          render deploys create implementacao -o text
+
+      # 7. Obtém a URL do serviço
       - name: Get Service URL
         run: |
           render services list -o json | jq .
           SERVICE_URL=$(render services list -o json | jq -r '.[0].url')
           echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
 
-      # 7. Exibe a URL do serviço
+      # 8. Exibe a URL do serviço
       - name: Display Service URL
         run: |
           echo "A aplicação está disponível em: $SERVICE_URL"
