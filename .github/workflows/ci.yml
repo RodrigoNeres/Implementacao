@@ -81,3 +81,7 @@ jobs:
       - name: Display Service URL
         run: |
           echo "A aplicação está disponível em: $SERVICE_URL"
+
+      - name: Start Gunicorn
+        run: |
+          gunicorn implementacao.wsgi
