@@ -46,7 +46,11 @@ jobs:
       - name: Verify Render CLI installation
         run: |
           render --version
-
+      
+      - name: Add Render CLI to PATH
+        run: |
+            echo "$HOME/.render/bin" >> $GITHUB_PATH
+            
       # 3. Faz login no Render
       - name: Log in to Render
         run: |
