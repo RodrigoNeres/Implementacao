@@ -13,59 +13,52 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Faz checkout do código do repositório
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Configura o Python
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.x'  # Substitua pela versão do Python do seu projeto
+          python-version: '3.x'
 
-      # 3. Instala as dependências
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install -r requirements.txt
+          pip install gunicorn  # Garante que gunicorn esteja instalado
 
-      # 4. Executa os testes
       - name: Run tests
         run: |
           python -m pytest || true  # Evita falha na pipeline se os testes falharem
 
   deploy:
     runs-on: ubuntu-latest
-    needs: test  # Garante que o deploy só ocorra após os testes passarem
-    if: github.ref == 'refs/heads/main'  # Executa o deploy apenas no branch main
+    needs: test
+    if: github.ref == 'refs/heads/main'
 
     steps:
-      # 1. Faz checkout do código do repositório
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Instala dependências do sistema (unzip e jq)
       - name: Install system dependencies
         run: |
           sudo apt-get update
           sudo apt-get install -y unzip jq
 
-      # 3. Baixa e instala a CLI do Render corretamente
       - name: Install Render CLI
         run: |
-          curl -L https://github.com/render-oss/cli/releases/latest/download/render-linux-amd64 -o render
+          curl -fsSL https://github.com/render-oss/cli/releases/latest/download/render-linux-amd64 -o render
           chmod +x render
           sudo mv render /usr/local/bin/render
-          if ! /usr/local/bin/render --version; then echo "Erro: Render CLI não foi instalada corretamente!" && exit 1; fi
+          render --version || (echo "Erro: Render CLI não foi instalada corretamente!" && exit 1)
 
-      # 4. Define workspace na Render
       - name: Set Render Workspace
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render workspace set default
+          render login --api-key $RENDER_API_KEY
+          render workspace set default || echo "Nenhum workspace foi definido."
 
-      # 5. Obtém o ID do serviço Render
       - name: Get Render Service ID
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
@@ -74,20 +67,17 @@ jobs:
           if [ -z "$SERVICE_ID" ]; then echo "Erro: Serviço 'implementacao' não encontrado!" && exit 1; fi
           echo "SERVICE_ID=$SERVICE_ID" >> $GITHUB_ENV
 
-      # 6. Executa o deploy na Render usando o ID do serviço
       - name: Deploy to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render deploys create $SERVICE_ID -o text
+          render deploys create $SERVICE_ID --confirm --output text
 
-      # 7. Obtém a URL do serviço
       - name: Get Service URL
         run: |
           SERVICE_URL=$(render services list -o json | jq -r '.[] | select(.service.id=="'$SERVICE_ID'").service.serviceDetails.url')
           echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
 
-      # 8. Exibe a URL do serviço
       - name: Display Service URL
         run: |
           echo "A aplicação está disponível em: $SERVICE_URL"
