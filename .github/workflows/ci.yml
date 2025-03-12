@@ -53,12 +53,14 @@ jobs:
       # 3. Baixa e instala a CLI do Render
       - name: Install Render CLI
         run: |
-          curl -L https://github.com/render-oss/cli/releases/latest/download/render -o /usr/local/bin/render
-          chmod +x /usr/local/bin/render
+          curl -L https://github.com/render-oss/cli/releases/latest/download/render -o render
+          chmod +x render
+          sudo mv render /usr/local/bin/render
 
       # 4. Verifica se a CLI foi instalada corretamente
       - name: Verify Render CLI installation
         run: |
+          if [ ! -x "/usr/local/bin/render" ]; then echo "Erro: Render CLI não foi instalada corretamente!" && exit 1; fi
           which render
           render --version
 
