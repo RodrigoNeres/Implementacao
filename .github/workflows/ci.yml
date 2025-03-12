@@ -75,9 +75,4 @@ jobs:
       # 6. Executa o deploy na Render
       - name: Deploy to Render
         run: |
-          render deploy
-
-      # 6. Executa o deploy na Render
-      - name: Deploy to Render
-        run: |
-          render deploy
+          render deploys
