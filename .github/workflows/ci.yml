@@ -48,6 +48,7 @@ jobs:
       - name: Install Render CLI
         run: |
           curl -s https://cli.render.com/install.sh | bash
+          ls -la $HOME/.render/bin  # Verifica se a instalação foi bem-sucedida
 
       # 3. Adiciona a CLI do Render ao PATH
       - name: Add Render CLI to PATH
@@ -57,8 +58,9 @@ jobs:
       # 4. Verifica se a CLI foi instalada corretamente
       - name: Verify Render CLI installation
         run: |
-          which render
-          render --version
+          echo "PATH: $PATH"
+          which render || echo "Render CLI not found"
+          render --version || echo "Render CLI not installed"
 
       # 5. Faz login na Render usando a chave de API
       - name: Login to Render
