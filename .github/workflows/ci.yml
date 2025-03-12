@@ -1,5 +1,7 @@
 name: Docker CI/CD Pipeline
 
+name: CI Pipeline with Render Deploy
+
 on:
   push:
     branches:
@@ -50,8 +52,8 @@ jobs:
           echo "Creating Render CLI directory..."
           mkdir -p $HOME/.render/bin
 
-          echo "Downloading Render CLI..."
-          curl -L https://cli.render.com/install.sh -o $HOME/.render/install.sh
+          echo "Downloading Render CLI from an alternative source..."
+          curl -L https://<URL_ALTERNATIVA>/install.sh -o $HOME/.render/install.sh
 
           echo "Installing Render CLI..."
           bash $HOME/.render/install.sh
@@ -75,6 +77,11 @@ jobs:
       - name: Login to Render
         run: |
           render login --api-key ${{ secrets.RENDER_API_KEY }}
+
+      # 6. Executa o deploy na Render
+      - name: Deploy to Render
+        run: |
+          render deploy
 
       # 6. Executa o deploy na Render
       - name: Deploy to Render
