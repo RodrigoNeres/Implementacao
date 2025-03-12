@@ -40,22 +40,38 @@ jobs:
     if: github.ref == 'refs/heads/main'  # Executa o deploy apenas no branch main
 
     container:
-      image: rendercli/render-cli:latest  # Usa a imagem Docker com a CLI do Render
+      image: ubuntu:latest  # Usa uma imagem base do Ubuntu
 
     steps:
       # 1. Faz checkout do código do repositório
       - name: Checkout code
         uses: actions/checkout@v3
 
-      # 2. Faz login na Render usando a chave de API
+      # 2. Atualiza o sistema e instala dependências básicas
+      - name: Install system dependencies
+        run: |
+          apt-get update
+          apt-get install -y curl bash
+
+      # 3. Instala a CLI do Render
+      - name: Install Render CLI
+        run: |
+          mkdir -p $HOME/.render/bin
+          curl -L https://cli.render.com/install.sh -o $HOME/.render/install.sh
+          bash $HOME/.render/install.sh
+          echo "$HOME/.render/bin" >> $GITHUB_PATH
+
+      # 4. Verifica se a CLI foi instalada corretamente
+      - name: Verify Render CLI installation
+        run: |
+          which render
+          render --version
+
+      # 5. Faz login na Render usando a chave de API
       - name: Login to Render
         run: |
           render login --api-key ${{ secrets.RENDER_API_KEY }}
 
-      # 3. Executa o deploy na Render
-      - name: Deploy to Render
-        run: |
-          render deploy
       # 6. Executa o deploy na Render
       - name: Deploy to Render
         run: |
