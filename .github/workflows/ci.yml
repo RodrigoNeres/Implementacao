@@ -64,15 +64,13 @@ jobs:
           which render
           render --version
 
-      # 5. Faz login na Render usando a chave de API
+      # 5. Faz login na Render usando a variável de ambiente
       - name: Login to Render
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render login --api-key ${{ secrets.RENDER_API_KEY }}
-
-      # 6. Executa o deploy na Render
-      - name: Deploy to Render
-        run: |
-          render deploy
+          export RENDER_API_KEY
+          render login
 
       # 6. Executa o deploy na Render
       - name: Deploy to Render
