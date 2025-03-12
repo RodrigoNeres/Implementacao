@@ -72,10 +72,10 @@ jobs:
           export RENDER_API_KEY
           render login -o text  # Força o modo não interativo
 
-      # 6. Executa o deploy na Render
+      # 6. Executa o deploy na Render (modo não interativo)
       - name: Deploy to Render
         run: |
-          render deploys create implementacao
+          render deploys create implementacao -o text  # Força o modo não interativo
 
       # 7. Obtém a URL do serviço
       - name: Get Service URL
@@ -83,6 +83,11 @@ jobs:
           SERVICE_URL=$(render services list --format json | jq -r '.[0].service.serviceDetails.url')
           echo "Service URL: $SERVICE_URL"
           echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
+
+      # 8. Exibe a URL do serviço
+      - name: Display Service URL
+        run: |
+          echo "A aplicação está disponível em: $SERVICE_URL"
 
       # 8. Exibe a URL do serviço
       - name: Display Service URL
