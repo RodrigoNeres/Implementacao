@@ -46,7 +46,8 @@ jobs:
 
       - name: Install Render CLI
         run: |
-          curl -fsSL https://github.com/render-oss/cli/releases/download/v0.1.0/render-linux-amd64 -o render
+          LATEST_RELEASE=$(curl -s https://api.github.com/repos/render-oss/cli/releases/latest | jq -r '.tag_name')
+          curl -fsSL "https://github.com/render-oss/cli/releases/download/$LATEST_RELEASE/render-linux-amd64" -o render
           chmod +x render
           sudo mv render /usr/local/bin/render
           if ! /usr/local/bin/render --version; then echo "Erro: Render CLI não foi instalada corretamente!" && exit 1; fi
