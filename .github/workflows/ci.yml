@@ -75,4 +75,20 @@ jobs:
       # 6. Executa o deploy na Render
       - name: Deploy to Render
         run: |
-          render deploys
+          render deploys      # 6. Executa o deploy na Render
+      - name: Deploy to Render
+        run: |
+          render services list  # Substitua pelo comando correto para deploy
+
+      # 7. Obtém a URL do serviço
+      - name: Get Service URL
+        run: |
+          SERVICE_URL=$(render services list --format json | jq -r '.[0].service.serviceDetails.url')
+          echo "Service URL: $SERVICE_URL"
+          echo "SERVICE_URL=$SERVICE_URL" >> $GITHUB_ENV
+
+      # 8. Exibe a URL do serviço
+      - name: Display Service URL
+        run: |
+          echo "A aplicação está disponível em: $SERVICE_URL"
+          
