@@ -64,12 +64,12 @@ jobs:
           which render
           render --version
 
-      # 5. Configura a variável de ambiente para autenticação automática
-      - name: Set Render API Key
+      # 5. Faz login na Render
+      - name: Login to Render
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          export RENDER_API_KEY
+          echo "$RENDER_API_KEY" | render login --api-key $RENDER_API_KEY
 
       # 6. Executa o deploy na Render (modo não interativo)
       - name: Deploy to Render
