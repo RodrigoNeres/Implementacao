@@ -70,22 +70,34 @@ jobs:
             exit 1
           fi
 
+      - name: Verify Render Authentication
+        env:
+          RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
+        run: |
+          if ! render login --check; then
+            echo "Erro: Falha na autenticação do Render CLI!"
+            exit 1
+          fi
+
       - name: Set Render Workspace
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
           set -x
-          RAW_JSON=$(render workspace list -o json)
-          echo "Raw JSON: $RAW_JSON"
-          
-          WORKSPACE_NAME=$(echo "$RAW_JSON" | jq -r 'if length > 0 then .[0].workspace.id else empty end')
-          
-          if [ -z "$WORKSPACE_NAME" ]; then 
-            echo "Erro: Nenhum workspace encontrado!" 
-            exit 1
+          if render workspace current; then
+            echo "Workspace já está configurado."
+          else
+            RAW_JSON=$(render workspace list -o json 2>/dev/null)
+            echo "Raw JSON: $RAW_JSON"
+            WORKSPACE_NAME=$(echo "$RAW_JSON" | jq -r 'if length > 0 then .[0].id else empty end')
+            
+            if [ -z "$WORKSPACE_NAME" ]; then 
+              echo "Erro: Nenhum workspace encontrado!" 
+              exit 1
+            fi
+            
+            render workspace set "$WORKSPACE_NAME"
           fi
-          
-          render workspace set "$WORKSPACE_NAME"
 
       - name: Get Render Service ID
         env:
