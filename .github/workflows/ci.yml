@@ -74,7 +74,9 @@ jobs:
         env:
           RENDER_API_KEY: ${{ secrets.RENDER_API_KEY }}
         run: |
-          render workspace set default
+          WORKSPACE_NAME=$(render workspace list -o json | jq -r '.[0].workspace.id')
+          if [ -z "$WORKSPACE_NAME" ]; then echo "Erro: Nenhum workspace encontrado!" && exit 1; fi
+          render workspace set "$WORKSPACE_NAME"
 
       - name: Get Render Service ID
         env:
