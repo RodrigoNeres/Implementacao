@@ -54,7 +54,7 @@ jobs:
           fi
           echo "Latest release: $LATEST_RELEASE"
           
-          DOWNLOAD_URL="https://github.com/render-oss/cli/releases/download/$LATEST_RELEASE/render-linux-amd64"
+          DOWNLOAD_URL="https://github.com/render-oss/cli/releases/download/$LATEST_RELEASE/render-cli-linux-amd64"
           if ! curl --output /dev/null --silent --head --fail "$DOWNLOAD_URL"; then
             echo "Erro: URL de download inválida - $DOWNLOAD_URL"
             exit 1
