@@ -54,7 +54,7 @@ jobs:
           fi
           echo "Latest release: $LATEST_RELEASE"
           
-          DOWNLOAD_URL="https://github.com/render-oss/cli/releases/download/v2.0.0/cli_2.0.0_darwin_amd64.zip"
+          DOWNLOAD_URL="https://github.com/render-oss/cli/releases/download/$LATEST_RELEASE/cli_${LATEST_RELEASE}_darwin_amd64.zip"
           if ! curl --output /dev/null --silent --head --fail "$DOWNLOAD_URL"; then
             echo "Erro: URL de download inválida - $DOWNLOAD_URL"
             exit 1
@@ -62,8 +62,8 @@ jobs:
           
           curl -fsSL "$DOWNLOAD_URL" -o render.zip
           unzip render.zip -d render_cli
-          chmod +x render_cli/render
-          sudo mv render_cli/render /usr/local/bin/render
+          chmod +x render_cli/cli_${LATEST_RELEASE}
+          sudo mv render_cli/cli_${LATEST_RELEASE} /usr/local/bin/render
           
           if ! /usr/local/bin/render --version; then 
             echo "Erro: Render CLI não foi instalada corretamente!"
