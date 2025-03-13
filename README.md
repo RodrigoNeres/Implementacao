@@ -73,6 +73,6 @@ Siga os passos abaixo para execução com Docker:
 
 ### Autor
   - Rodrigo Neres da Silva
-  - GitHub: Rodrigo Neres
+  - GitHub: RodrigoNeres
   - E-mail: rodrigo.neres@gmail.com
 
