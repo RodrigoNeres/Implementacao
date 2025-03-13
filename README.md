@@ -20,7 +20,6 @@ Abaixo estão os passos para configurar e executar a aplicação em ambiente loc
 
    # Aplicação Flask Simples
 
-Esta é uma aplicação web simples desenvolvida em Python usando o framework Flask. Ela retorna "Hello, World!" quando acessada na rota raiz (`/`).
 
 ##  Como executar a aplicação
 
@@ -49,7 +48,7 @@ Siga os passos abaixo para configurar e executar a aplicação localmente.
 1.  **Execute:**
     ```bash
     pytest
-2. **Caso todos os testes rodem sem erros, será mostrada a mensagem abaixo:**
+2. **Caso todos os testes sejam executados sem erros, será mostrada a mensagem abaixo:**
     ```bash
     ============================= test session starts ==============================
     collected 1 item
@@ -68,7 +67,7 @@ Siga os passos abaixo para execução com Docker:
 
 ### Dependencias:
 
-- As dependencias estão no arquivo reuirements.txt e para instalá-las, execute:
+- As dependencias estão no arquivo requirements.txt e para instalá-las, execute:
     ```bash
     pip install -r requirements.txt
 
