@@ -1,4 +1,4 @@
-# Projeto de Implementação Utilizando Flask 
+# Projeto de Implementação Utilizando Flask
 
 Esta é uma aplicação web desenvolvida em Python usando o framework Flask. Ela retorna "Hello, World!" quando acessa a rota raiz.
 
